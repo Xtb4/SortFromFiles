@@ -1,7 +1,8 @@
-package com.xtb4.sortfromfiles.data.IO;
+package com.xtb4.sortfromfiles.sorter.data.IO;
 
-import com.xtb4.sortfromfiles.data.Converter;
-import com.xtb4.sortfromfiles.data.Input;
+import com.xtb4.sortfromfiles.sorter.data.Converter;
+import com.xtb4.sortfromfiles.sorter.data.Input;
+import com.xtb4.sortfromfiles.sorter.exceptions.InputTypeException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -24,7 +25,7 @@ public class InputFile<T> implements Input<T> {
     }
 
     @Override
-    public T next() {
+    public T next() throws InputTypeException {
         String input = scanner.nextLine();
         return converter.convert(input);
     }

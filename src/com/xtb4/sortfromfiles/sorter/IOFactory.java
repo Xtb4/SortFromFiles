@@ -1,15 +1,15 @@
-package com.xtb4.sortfromfiles.logic;
+package com.xtb4.sortfromfiles.sorter;
 
-import com.xtb4.sortfromfiles.data.Converter;
-import com.xtb4.sortfromfiles.data.IO.InputFile;
-import com.xtb4.sortfromfiles.data.IO.OutputFile;
-import com.xtb4.sortfromfiles.data.Input;
-import com.xtb4.sortfromfiles.data.Output;
+import com.xtb4.sortfromfiles.sorter.data.Converter;
+import com.xtb4.sortfromfiles.sorter.data.IO.InputFile;
+import com.xtb4.sortfromfiles.sorter.data.IO.OutputFile;
+import com.xtb4.sortfromfiles.sorter.data.Input;
+import com.xtb4.sortfromfiles.sorter.data.Output;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class IOFabric {
+public class IOFactory {
 
     public static Input getInputs(String file, Converter converter) throws FileNotFoundException {
         return new InputFile(file, converter);

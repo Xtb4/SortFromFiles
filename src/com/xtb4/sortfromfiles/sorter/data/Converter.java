@@ -1,8 +1,10 @@
-package com.xtb4.sortfromfiles.data;
+package com.xtb4.sortfromfiles.sorter.data;
+
+import com.xtb4.sortfromfiles.sorter.exceptions.InputTypeException;
 
 public interface Converter<T> {
 
-    T convert(String input);
+    T convert(String input) throws InputTypeException;
     String convert (T input);
 
     Converter<String> STRING_CONVERTER = new Converter<>(){
@@ -15,12 +17,12 @@ public interface Converter<T> {
     Converter<Integer> INTEGER_CONVERTER = new Converter<>() {
 
         @Override
-        public Integer convert(String input) {
+        public Integer convert(String input) throws InputTypeException {
             try{
                 return Integer.parseInt(input);
             }
             catch (Exception e){
-                throw new IllegalArgumentException();
+                throw new InputTypeException();
             }
         }
 

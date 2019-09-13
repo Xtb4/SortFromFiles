@@ -1,13 +1,13 @@
 package com.xtb4.sortfromfiles;
 
-import com.xtb4.sortfromfiles.data.Converter;
-import com.xtb4.sortfromfiles.data.Input;
-import com.xtb4.sortfromfiles.data.Output;
-import com.xtb4.sortfromfiles.exceptions.ArgError;
-import com.xtb4.sortfromfiles.logic.IOFabric;
-import com.xtb4.sortfromfiles.logic.MergeSorter;
-import com.xtb4.sortfromfiles.view.View;
+import com.xtb4.sortfromfiles.sorter.data.Converter;
+import com.xtb4.sortfromfiles.sorter.data.Input;
+import com.xtb4.sortfromfiles.sorter.data.Output;
+import com.xtb4.sortfromfiles.sorter.IOFactory;
+import com.xtb4.sortfromfiles.sorter.MergeSorter;
+import com.xtb4.sortfromfiles.sorter.exceptions.SorterException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Args order = Args.DEFAULT_ORDER;
         Args type = null;
         String outFile = null;
@@ -42,44 +42,63 @@ public class Main {
             }
         }
 
-        if(order == null){
-            View.showError(ArgError.WRONG_ORDER);
+        if(type == null) {
+            System.out.println(Messages.WRONG_TYPE);
             return;
         }
-        if(type == null){
-            View.showError(ArgError.WRONG_TYPE);
+        if(outFile == null) {
+            System.out.println(Messages.WRONG_OUTPUT_FILE);
             return;
         }
-        if(outFile == null){
-            View.showError(ArgError.WRONG_OUTPUT_FILE);
+        if(inFiles.isEmpty()) {
+            System.out.println(Messages.WRONG_INPUT_FILE);
             return;
         }
-        if(inFiles.size() < 1){
-            View.showError(ArgError.WRONG_INPUT_FILE);
-            return;
-        }
-
-        View.showStartMessage();
 
         Comparator comparator = order == Args.ORDER_ASC ? Comparator.naturalOrder() : Comparator.reverseOrder();
         Converter converter = type == Args.TYPE_INTEGER ? Converter.INTEGER_CONVERTER : Converter.STRING_CONVERTER;
 
         List<Input> inputs = new LinkedList<>();
 
-        for(String file : inFiles){
-            inputs.add(IOFabric.getInputs(file, converter));
+        for(String file : inFiles) {
+            try {
+                inputs.add(IOFactory.getInputs(file, converter));
+            } catch (FileNotFoundException e) {
+                System.out.println(String.format(Messages.INPUT_FILE_NOT_FOUND, file));
+            }
         }
 
-        Output output = IOFabric.getOutput(outFile, converter);
+        Output output = null;
+        MergeSorter sorter = new MergeSorter(comparator);
 
-        MergeSorter sorter = new MergeSorter(comparator, inputs, output);
-        sorter.sort();
-
-        output.close();
-        for (Input input : inputs) {
-            input.close();
+        try {
+            output = IOFactory.getOutput(outFile, converter);
+            sorter.sort(inputs, output);
+        } catch (SorterException e) {
+            handleException(e.type);
+        } catch (IOException e) {
+            System.out.println(Messages.NO_OUTPUT_SOURCE);
         }
+        finally {
+            for (Input input : inputs) {
+                input.close();
+            }
+            if (output != null) {
+                output.close();
+            }
+        }
+    }
 
-        View.showResult(outFile);
+    private static void handleException(SorterException.ErrorType errorType) {
+        switch (errorType) {
+            case NO_INPUT_SOURCES:
+                System.out.println(Messages.NO_INPUT_SOURCES);
+                break;
+            case NO_OUTPUT_SOURCE:
+                System.out.println(Messages.NO_OUTPUT_SOURCE);
+                break;
+            case ERROR_WRITE_OUTPUT:
+                System.out.println(Messages.ERROR_WRITE_OUTPUT);
+        }
     }
 }

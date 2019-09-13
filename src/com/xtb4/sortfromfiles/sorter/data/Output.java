@@ -1,4 +1,4 @@
-package com.xtb4.sortfromfiles.data;
+package com.xtb4.sortfromfiles.sorter.data;
 
 import java.io.IOException;
 

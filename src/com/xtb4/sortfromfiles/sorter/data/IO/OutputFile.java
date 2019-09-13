@@ -1,7 +1,7 @@
-package com.xtb4.sortfromfiles.data.IO;
+package com.xtb4.sortfromfiles.sorter.data.IO;
 
-import com.xtb4.sortfromfiles.data.Converter;
-import com.xtb4.sortfromfiles.data.Output;
+import com.xtb4.sortfromfiles.sorter.data.Converter;
+import com.xtb4.sortfromfiles.sorter.data.Output;
 
 import java.io.FileWriter;
 import java.io.IOException;
